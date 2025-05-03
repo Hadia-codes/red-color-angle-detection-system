@@ -1,93 +1,59 @@
-# Color-to-Angle Detection System
+# Red Object Controlled Angle System
 
 ## 🔧 Project Name:
 
-**Red Object Controlled Servo & LED System Using Python, Arduino, and Web UI**
+**Red Object-Based Angle Controller Using Python, Arduino, and Web UI**
 
 ---
 
 ## 📘 Description:
 
-This project is a creative integration of **computer vision**, **hardware control**, and **interactive design**. Using a webcam, Python detects red-colored objects, converts the number of objects into an angle, and communicates it to an Arduino. The Arduino responds by lighting up LEDs and rotating a servo motor. A web interface also allows manual simulation of angles with aesthetic visual feedback.
+This project blends **computer vision**, **microcontroller programming**, and **UI design** into a single smart system. A red object is tracked by a webcam using Python. The number of red objects detected (up to 3) is converted into a corresponding angle and sent to an Arduino. The Arduino lights up LEDs and rotates a servo accordingly. An optional web interface displays red blocks to represent each detected object, acting as a visual simulation.
 
 ---
 
-## 🧠 Components Breakdown:
+## 🧠 How It Works:
 
-### 1. Python (Computer Vision)
+### ▶ Python Script (red\_tracker.py)
 
-* Uses OpenCV to capture live video from webcam.
-* Detects and counts red color blobs (objects).
-* Converts count (0, 1, 2, or 3+) into angles (0°, 45°, 90°, 135°).
-* Sends count to Arduino via serial communication.
-* Displays rectangles around red objects and shows the detected count and angle in real-time.
+* Uses OpenCV to open the webcam and convert video to HSV format.
+* Detects red-colored regions using two HSV masks.
+* Counts distinct red blobs that exceed a set size.
+* Converts the count (0–3) to an angle (0°, 45°, 90°, 135°).
+* Sends the count to Arduino via USB serial.
+* Displays live camera feed with red highlights and angle information.
 
-### 2. Arduino (Hardware Control)
+### ▶ Arduino Code (servo\_led\_control.ino)
 
-* Listens for data sent from Python.
-* Controls 3 LEDs based on count:
+* Waits for incoming number from Python over serial.
+* Uses 3 LEDs to show detection level:
 
-  * 0 = All LEDs OFF
-  * 1 = LED1 ON
-  * 2 = LED1, LED2 ON
-  * 3+ = LED1, LED2, LED3 ON
-* Moves a servo motor to corresponding angle (up to 135°).
-* Code includes safety cap at 180° to protect servo motor.
+  * 0 → All LEDs OFF
+  * 1 → LED1 ON
+  * 2 → LED1 + LED2 ON
+  * 3 → All LEDs ON
+* Controls a servo motor’s angle (based on `count × 45°`), capped at 135°.
 
-### 3. Web Interface (Angle Visualizer)
+### ▶ Web Interface (index.html + style.css + script.js)
 
-* Mobile-friendly, responsive web page with soft pastel theme.
-* Features intro animation and interactive angle buttons (0° to 135°).
-* Clicking a button shows 0 to 3 bright red glowing blocks.
-* Acts as a virtual simulation of physical interaction.
+* Cute interactive UI with 4 angle buttons: 0°, 45°, 90°, 135°.
+* When pressed, the corresponding number of bright red blocks is shown.
+* Simulates what the Python+Arduino system would do physically.
 
 ---
 
-## 💻 Technologies Used:
+## 💻 Tech Stack:
 
 * **Python 3.10.x**
-* **OpenCV**
-* **PySerial**
-* **Arduino Uno R3**
-* **Servo Motor (SG90)**
-* **LEDs + Resistors**
-* **HTML/CSS/JavaScript** for web interface
+* **OpenCV** for color tracking
+* **PySerial** for Python–Arduino communication
+* **Arduino Uno**
+* **HTML/CSS/JS** for web UI
+* **Hardware**: LEDs, SG90 Servo, Breadboard, Wires
 
 ---
 
-## 🔄 Workflow Summary:
-
-1. Python turns on webcam.
-2. Filters and isolates red color in HSV range.
-3. Counts the number of distinct red blobs.
-4. Calculates angle: `angle = count * 45`.
-5. Sends count to Arduino via Serial.
-6. Arduino receives input, lights LEDs and rotates servo accordingly.
-7. Optional: Web UI allows simulation with red block visual feedback.
-
----
-
-## 📊 Mapping Table:
-
-| Red Objects Detected | Angle | LEDs ON          |
-| -------------------- | ----- | ---------------- |
-| 0                    | 0°    | None             |
-| 1                    | 45°   | LED1             |
-| 2                    | 90°   | LED1, LED2       |
-| 3+                   | 135°  | LED1, LED2, LED3 |
-
----
-
-## 📦 Future Improvements:
-
-* Use `MediaPipe` or `cvzone` for finger detection instead of red blobs.
-* Add Flask backend to connect web app directly to hardware.
-* Use Bluetooth/WiFi module for wireless control.
-* Integrate OLED screen for visual feedback on hardware.
-
----
-
-## 📁 Folder Suggestions:
+## ⚙ Folder Structure:
 
 ```
 project-folder/
@@ -104,18 +70,35 @@ project-folder/
 
 ---
 
-## 👩‍💻 Author
+## 📊 Detection Logic Table:
 
-**Hadia** – Computer Science Student, Tech Explorer, Creative Builder
+| Red Objects Seen | Angle | LEDs Lit           |
+| ---------------- | ----- | ------------------ |
+| 0                | 0°    | None               |
+| 1                | 45°   | LED1               |
+| 2                | 90°   | LED1 + LED2        |
+| 3 or more        | 135°  | LED1 + LED2 + LED3 |
+
+---
+
+## 🚀 Future Ideas:
+
+* Replace red detection with AI-based gesture tracking (e.g., MediaPipe).
+* Use a mobile-controlled web app (Flask + JS) to wirelessly trigger Arduino.
+* Add OLED/LCD display on Arduino side for showing current angle.
+
+---
+
+## 👤 Author
+
+**Hadia** — Computer Science student exploring hands-on tech integrations.
 
 ---
 
 ## 📜 License
 
-Open for educational and non-commercial use. Please give credit where due.
+Open-source for educational use. Please credit properly if reused.
 
 ---
 
-## 📬 Contact
 
-If you'd like help turning this into a presentation, demo, or school submission format, feel free to ask!
