@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<!-- saved from url=(0064)http://127.0.0.1:5500/Try/jarvis.nist.gov/jarvissolar/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadia's Kawaii Physics App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.5s ease;
+        }
+
+        body {
+            background-color: #fff8f8;
+            background-image: linear-gradient(to bottom, #fff8fa, #f9fff0);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Intro Screen */
+        #intro-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            background-image: linear-gradient(to bottom, #fff8fa, #f9fff0);
+            animation: fadeOut 2s ease-in-out 3s forwards;
+        }
+
+        .intro-title {
+            font-size: 2rem;
+            color: #e67a9e;
+            text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(230, 122, 158, 0.2);
+        }
+
+        .intro-kawaii {
+            font-size: 5rem;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        /* Picnic Background */
+        .picnic-blanket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background-image: repeating-linear-gradient(45deg, 
+                #ffcfdf 0px, #ffcfdf 20px, 
+                #ffeef2 20px, #ffeef2 40px);
+            border-radius: 50% 50% 0 0 / 20% 20% 0 0;
+            z-index: -3;
+        }
+
+        /* Main Screen */
+        #main-screen {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s ease-in-out 4s forwards;
+            width: 100%;
+            padding-top: 40px;
+        }
+
+        h1 {
+            color: #e67a9e;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .angle-button {
+            background-color: #ffeef2;
+            color: #e67a9e;
+            border: 2px dashed #ffb6c1;
+            border-radius: 20px;
+            padding: 25px 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(230, 122, 158, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .angle-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(230, 122, 158, 0.3);
+            background-color: #ffe0eb;
+        }
+
+        .angle-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(230, 122, 158, 0.2);
+        }
+
+        .angle-button::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .angle-button:hover::before {
+            opacity: 0.6;
+            animation: shine 1.5s infinite;
+        }
+
+        /* Visualization */
+        .visualization {
+            height: 200px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 2px dashed #aed581;
+            border-radius: 25px;
+            margin: 20px 0 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(174, 213, 129, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .dots-container {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .dot {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(to bottom right, #ff0000, #990000);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    animation: glow 1.5s infinite alternate;
+}
+
+
+        .show-dots {
+            display: flex !important;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            color: #e67a9e;
+            font-size: 0.9rem;
+            width: 100%;
+            text-align: center;
+            border-top: 2px dashed #ffcfdf;
+            background-color: rgba(255, 255, 255, 0.7);
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .footer-heart {
+            color: #ff6b6b;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+                visibility: hidden;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(255, 82, 82, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 30px rgba(255, 82, 82, 0.9);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(255, 82, 82, 0.7);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        @keyframes shine {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.1);
+            }
+            50% {
+                transform: scale(1);
+            }
+            75% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        @keyframes wiggle {
+            0%, 100% {
+                transform: rotate(-3deg);
+            }
+            50% {
+                transform: rotate(3deg);
+            }
+        }
+
+        /* Kawaii Decorations */
+        .kawaii-decoration {
+            position: absolute;
+            z-index: -1;
+        }
+
+        .strawberry-tree {
+            top: 5%;
+            left: 5%;
+            font-size: 3.5rem;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .strawberry-tree-2 {
+            top: 10%;
+            right: 5%;
+            font-size: 4rem;
+            animation: float 9s ease-in-out infinite 1s;
+        }
+
+        .bunny {
+            bottom: 15%;
+            left: 10%;
+            font-size: 2rem;
+            animation: float 6s ease-in-out infinite 2s;
+            z-index: 1;
+        }
+
+        .squirrel {
+            bottom: 20%;
+            right: 15%;
+            font-size: 1.8rem;
+            animation: float 7s ease-in-out infinite 1.5s;
+            z-index: 1;
+        }
+
+        .food-item {
+            font-size: 1.5rem;
+            animation: wiggle 5s ease-in-out infinite;
+        }
+
+        .cookie {
+            bottom: 25%;
+            left: 30%;
+            z-index: 1;
+        }
+
+        .bread {
+            bottom: 30%;
+            right: 25%;
+            z-index: 1;
+        }
+
+        /* Cat Character */
+        .cat-character {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 10px auto;
+            z-index: 1;
+        }
+        
+        .intro-cat {
+            margin-bottom: 10px;
+        }
+        
+        .picnic-basket {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            z-index: 1;
+            animation: float 8s ease-in-out infinite 1s;
+        }
+    </style>
+</head>
+<body>
+    <!-- Picnic Background -->
+    <div class="picnic-blanket"></div>
+    
+    <!-- Kawaii Decorations -->
+    <div class="kawaii-decoration strawberry-tree">🐰</div>
+    <div class="kawaii-decoration strawberry-tree-2">🌳</div>
+    <div class="kawaii-decoration bunny">🐰</div>
+    <div class="kawaii-decoration squirrel">🐿️</div>
+    <div class="kawaii-decoration food-item cookie">🍪</div>
+    <div class="kawaii-decoration food-item bread">🍞</div>
+    <div class="picnic-basket">🧺</div>
+
+    <!-- Intro Screen -->
+    <div id="intro-screen">
+        <div class="intro-kawaii">🐰</div>
+        
+       
+        
+        <div class="intro-title">💖 Made by Hadia – when ai meets physcs ! 💖</div>
+    </div>
+
+    <!-- Main Screen -->
+    <div id="main-screen" class="app-container">
+        <h1>✨ Angle Options ✨</h1>
+        
+        <div class="button-container">
+            <button class="angle-button" onclick="showDots(0)">0°</button>
+            <button class="angle-button" onclick="showDots(1)">45°</button>
+            <button class="angle-button" onclick="showDots(2)">90°</button>
+            <button class="angle-button" onclick="showDots(3)">135°</button>
+        </div>
+        
+        <div class="visualization">
+            <div id="dots-0" class="dots-container"></div>
+            <div id="dots-1" class="dots-container">
+                <div class="dot"></div>
+            </div>
+            <div id="dots-2" class="dots-container show-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <div id="dots-3" class="dots-container">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-text">
+            <span class="footer-heart">♡</span>
+            Hadia's AI + Arduino Project
+            <span class="footer-heart">♡</span>
+        </div>
+    </footer>
+
+    <script>
+        // Simple function to show dots based on angle selection
+        function showDots(number) {
+            // Hide all dot containers
+            const dotContainers = document.querySelectorAll('.dots-container');
+            dotContainers.forEach(container => {
+                container.classList.remove('show-dots');
+            });
+            
+            // Show the selected dots
+            const selectedContainer = document.getElementById(`dots-${number}`);
+            if (selectedContainer) {
+                selectedContainer.classList.add('show-dots');
+            }
+        }
+    </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+</body></html>
